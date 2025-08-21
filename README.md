@@ -8,6 +8,7 @@ AI-powered Go CLI tool that generates commit messages from staged git changes us
 - 📝 **Conventional Commits**: Follows conventional commit format (Add, Fix, Update, Remove)
 - 🎭 **Customizable Tone**: Choose from professional, fun, pirate, or serious tones
 - 🤝 **Interactive Mode**: Optionally confirm before creating and pushing commits with generated messages
+- 📁 **Auto-staging**: Automatically stages all changes with `git add -A` before analysis (can be disabled)
 - 🔄 **Fallback Support**: Falls back to rule-based generation if Ollama is unavailable
 - ⚙️ **Configurable**: Supports custom Ollama endpoints and models
 - 🚀 **Fast & Lightweight**: Built with Go and Cobra CLI framework
@@ -45,12 +46,7 @@ ollama serve
 ollama pull llama3.2
 ```
 
-3. **Stage your changes**:
-```bash
-git add .
-```
-
-4. **Generate commit message**:
+3. **Generate commit message** (auto-stages changes by default):
 ```bash
 ./snippety
 
@@ -79,6 +75,9 @@ git add .
 # Interactive mode
 ./snippety --interactive
 
+# Disable auto-staging (manual git add required)
+./snippety --auto-stage=false
+
 # Combined options
 ./snippety --ollama-url http://remote-server:11434 --model codellama --tone pirate --interactive
 ```
@@ -106,11 +105,13 @@ git add .
 | `--model` | `llama3.2` | Ollama model to use for generation |
 | `--tone` | `professional` | Tone for commit messages (professional, fun, pirate, serious) |
 | `--interactive` | `false` | Interactively confirm before creating and pushing the git commit |
+| `--auto-stage` | `true` | Automatically stage all changes with 'git add -A' before analysis |
 
 ## Example Output
 
 ```bash
 $ ./snippety
+Staging all changes...
 Generating commit message with Ollama...
 Making request to: http://localhost:11434/api/generate
 Generated commit message:
@@ -127,6 +128,7 @@ Generated commit message:
 Hoist new authentication middleware aboard! ⚓
 
 $ ./snippety --interactive
+Staging all changes...
 Generating commit message with Ollama...
 Generated commit message:
 Add user authentication middleware
@@ -138,10 +140,12 @@ Do you want to create a commit with this message? (y/N): y
 
 ## How It Works
 
-1. **Git Diff Analysis**: Retrieves staged changes using `git diff --staged`
-2. **AI Processing**: Sends the diff to Ollama with a specialized prompt
-3. **Commit Generation**: Returns a conventional commit message
-4. **Fallback**: Uses rule-based analysis if Ollama is unavailable
+1. **Auto-staging**: Automatically runs `git add -A` to stage all changes (unless disabled)
+2. **Git Diff Analysis**: Retrieves staged changes using `git diff --staged`
+3. **AI Processing**: Sends the diff to Ollama with a specialized prompt
+4. **Commit Generation**: Returns a conventional commit message
+5. **Interactive Confirmation**: Optionally prompts user to create commit and push
+6. **Fallback**: Uses rule-based analysis if Ollama is unavailable
 
 ## Supported Models
 

@@ -15,6 +15,7 @@ var (
 	showDiff    bool
 	tone        string
 	interactive bool
+	autoStage   bool
 )
 
 var rootCmd = &cobra.Command{
@@ -23,7 +24,7 @@ var rootCmd = &cobra.Command{
 	Long: `A CLI tool that analyzes your staged git changes and generates
 meaningful commit messages using Ollama AI based on the diff.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		git.GenerateCommitMessage(ollamaURL, ollamaModel, showDiff, tone, interactive)
+		git.GenerateCommitMessage(ollamaURL, ollamaModel, showDiff, tone, interactive, autoStage)
 	},
 }
 
@@ -33,6 +34,7 @@ func init() {
 	rootCmd.Flags().BoolVar(&showDiff, "show-diff", false, "show git diff output to the user")
 	rootCmd.Flags().StringVar(&tone, "tone", "professional", "tone for commit messages (professional, fun, pirate, serious)")
 	rootCmd.Flags().BoolVar(&interactive, "interactive", false, "interactively confirm before creating the git commit")
+	rootCmd.Flags().BoolVar(&autoStage, "auto-stage", true, "automatically stage all changes with 'git add -A' before generating commit message")
 }
 
 func Execute() {

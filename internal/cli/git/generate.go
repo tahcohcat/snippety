@@ -14,7 +14,15 @@ import (
 	"github.com/tahcohcat/snippety/internal/ollama"
 )
 
-func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone string, interactive bool) {
+func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone string, interactive bool, autoStage bool) {
+	if autoStage {
+		fmt.Println("Staging all changes...")
+		if err := stageAllChanges(); err != nil {
+			fmt.Printf("Error staging changes: %v\n", err)
+			return
+		}
+	}
+
 	diff, err := getStagedDiff()
 	if err != nil {
 		fmt.Printf("Error getting staged diff: %v\n", err)
@@ -22,7 +30,11 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 	}
 
 	if strings.TrimSpace(diff) == "" {
-		fmt.Println("No staged changes found. Please stage your changes with 'git add' first.")
+		if autoStage {
+			fmt.Println("No changes found to stage and commit.")
+		} else {
+			fmt.Println("No staged changes found. Please stage your changes with 'git add' first.")
+		}
 		return
 	}
 
@@ -72,7 +84,7 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 			fmt.Printf("Error reading input: %v\n", err)
 			return
 		}
-		
+
 		response = strings.ToLower(strings.TrimSpace(response))
 		if response == "y" || response == "yes" {
 			if err := createCommit(commitMessage); err != nil {
@@ -80,12 +92,12 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 				return
 			}
 			fmt.Println("✅ Commit created successfully!")
-			
+
 			if err := pushCommit(); err != nil {
 				fmt.Printf("Error pushing commit: %v\n", err)
 				return
 			}
-			fmt.Println("🚀 Commit pushed successfully!")
+			fmt.Println("🚀Commit  pushed successfully!")
 		} else {
 			fmt.Println("Commit not created.")
 		}
@@ -99,6 +111,15 @@ func getStagedDiff() (string, error) {
 		return "", fmt.Errorf("failed to get git diff: %w", err)
 	}
 	return string(output), nil
+}
+
+func stageAllChanges() error {
+	cmd := exec.Command("git", "add", "-A")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("git add -A failed: %w\nOutput: %s", err, string(output))
+	}
+	return nil
 }
 
 func createCommit(message string) error {

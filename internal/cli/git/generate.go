@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 	"time"
 
@@ -67,6 +68,19 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
+	// Get current branch and extract ticket prefix
+	branchName, err := getCurrentBranch()
+	var ticketPrefix string
+	if err != nil {
+		fmt.Printf("%sWarning: Could not determine current branch, commit message will not include ticket prefix%s\n", ColorYellow, ColorReset)
+		ticketPrefix = ""
+	} else {
+		ticketPrefix = extractTicketPrefix(branchName)
+		if ticketPrefix == "" && branchName != "main" && branchName != "master" {
+			fmt.Printf("%sWarning: Branch '%s' does not match ticket pattern, commit message will not include ticket prefix%s\n", ColorYellow, branchName, ColorReset)
+		}
+	}
+
 	// Check if Ollama is available
 	var commitMsg ollama.CommitMessage
 	if err := client.HealthCheck(ctx); err != nil {
@@ -74,7 +88,7 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 		fmt.Println("Falling back to basic analysis...")
 		title := analyzeAndGenerateMessage(diff)
 		commitMsg = ollama.CommitMessage{
-			Title:       title,
+			Title:       ticketPrefix + title,
 			Description: "Code changes as analyzed from the git diff.",
 		}
 	} else {
@@ -85,9 +99,12 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 			fmt.Printf("Falling back to basic analysis...")
 			title := analyzeAndGenerateMessage(diff)
 			commitMsg = ollama.CommitMessage{
-				Title:       title,
+				Title:       ticketPrefix + title,
 				Description: "Code changes as analyzed from the git diff.",
 			}
+		} else {
+			// Add ticket prefix to LLM-generated title
+			commitMsg.Title = ticketPrefix + commitMsg.Title
 		}
 	}
 
@@ -157,6 +174,33 @@ func pushCommit() error {
 		return fmt.Errorf("git push failed: %w\nOutput: %s", err, string(output))
 	}
 	return nil
+}
+
+func getCurrentBranch() (string, error) {
+	cmd := exec.Command("git", "branch", "--show-current")
+	output, err := cmd.Output()
+	if err != nil {
+		return "", fmt.Errorf("failed to get current branch: %w", err)
+	}
+	return strings.TrimSpace(string(output)), nil
+}
+
+func extractTicketPrefix(branchName string) string {
+	// Regex patterns for ticket extraction
+	patterns := []*regexp.Regexp{
+		// Pattern 1: BP-3648-add-lux-hack -> BP-3648:
+		regexp.MustCompile(`^([A-Z]+-)(\d+)`),
+		// Pattern 2: chore/DEVOPS-989 -> DEVOPS-989:
+		regexp.MustCompile(`/([A-Z]+-)(\d+)`),
+	}
+	
+	for _, pattern := range patterns {
+		if matches := pattern.FindStringSubmatch(branchName); len(matches) >= 3 {
+			return matches[1] + matches[2] + ": "
+		}
+	}
+	
+	return ""
 }
 
 func analyzeAndGenerateMessage(diff string) string {

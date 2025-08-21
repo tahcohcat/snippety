@@ -1,8 +1,10 @@
 package git
 
 import (
+	"bufio"
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 	"time"
@@ -12,7 +14,7 @@ import (
 	"github.com/tahcohcat/snippety/internal/ollama"
 )
 
-func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone string) {
+func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone string, interactive bool) {
 	diff, err := getStagedDiff()
 	if err != nil {
 		fmt.Printf("Error getting staged diff: %v\n", err)
@@ -43,33 +45,63 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 	defer cancel()
 
 	// Check if Ollama is available
+	var commitMessage string
 	if err := client.HealthCheck(ctx); err != nil {
 		fmt.Printf("Ollama health check failed: %v\n", err)
 		fmt.Println("Falling back to basic analysis...")
-		commitMessage := analyzeAndGenerateMessage(diff)
-		fmt.Println("Generated commit message:")
-		fmt.Println(strings.TrimSpace(commitMessage))
-		return
-	}
-
-	commitMessage, err := client.GenerateCommitMessage(ctx, diff, tone)
-	if err != nil {
-		fmt.Printf("Error generating commit message with ollama: %v\n", err)
-		fmt.Printf("Falling back to basic analysis...")
 		commitMessage = analyzeAndGenerateMessage(diff)
+	} else {
+		var err error
+		commitMessage, err = client.GenerateCommitMessage(ctx, diff, tone)
+		if err != nil {
+			fmt.Printf("Error generating commit message with ollama: %v\n", err)
+			fmt.Printf("Falling back to basic analysis...")
+			commitMessage = analyzeAndGenerateMessage(diff)
+		}
 	}
 
+	commitMessage = strings.TrimSpace(commitMessage)
 	fmt.Println("Generated commit message:")
-	fmt.Println(strings.TrimSpace(commitMessage))
+	fmt.Println(commitMessage)
+
+	if interactive {
+		fmt.Print("\nDo you want to create a commit with this message? (y/N): ")
+		reader := bufio.NewReader(os.Stdin)
+		response, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Printf("Error reading input: %v\n", err)
+			return
+		}
+		
+		response = strings.ToLower(strings.TrimSpace(response))
+		if response == "y" || response == "yes" {
+			if err := createCommit(commitMessage); err != nil {
+				fmt.Printf("Error creating commit: %v\n", err)
+				return
+			}
+			fmt.Println("✅ Commit created successfully!")
+		} else {
+			fmt.Println("Commit not created.")
+		}
+	}
 }
 
 func getStagedDiff() (string, error) {
-	cmd := exec.Command("git", "diff", "--staged", "--summary")
+	cmd := exec.Command("git", "diff", "--staged")
 	output, err := cmd.Output()
 	if err != nil {
 		return "", fmt.Errorf("failed to get git diff: %w", err)
 	}
 	return string(output), nil
+}
+
+func createCommit(message string) error {
+	cmd := exec.Command("git", "commit", "-m", message)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("git commit failed: %w\nOutput: %s", err, string(output))
+	}
+	return nil
 }
 
 func analyzeAndGenerateMessage(diff string) string {

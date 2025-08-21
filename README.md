@@ -6,6 +6,8 @@ AI-powered Go CLI tool that generates commit messages from staged git changes us
 
 - 🤖 **AI-Generated Messages**: Uses Ollama to generate meaningful commit messages
 - 📝 **Conventional Commits**: Follows conventional commit format (Add, Fix, Update, Remove)
+- 🎭 **Customizable Tone**: Choose from professional, fun, pirate, or serious tones
+- 🤝 **Interactive Mode**: Optionally confirm before creating commits with generated messages
 - 🔄 **Fallback Support**: Falls back to rule-based generation if Ollama is unavailable
 - ⚙️ **Configurable**: Supports custom Ollama endpoints and models
 - 🚀 **Fast & Lightweight**: Built with Go and Cobra CLI framework
@@ -51,6 +53,9 @@ git add .
 4. **Generate commit message**:
 ```bash
 ./snippety
+
+# Or with interactive confirmation:
+./snippety --interactive
 ```
 
 ## Usage
@@ -68,8 +73,29 @@ git add .
 # Different model
 ./snippety --model llama3.1
 
-# Both custom URL and model
-./snippety --ollama-url http://remote-server:11434 --model codellama
+# Custom tone
+./snippety --tone fun
+
+# Interactive mode
+./snippety --interactive
+
+# Combined options
+./snippety --ollama-url http://remote-server:11434 --model codellama --tone pirate --interactive
+```
+
+### Tone Options
+```bash
+# Professional tone (default)
+./snippety --tone professional
+
+# Fun tone with emojis and creative language
+./snippety --tone fun
+
+# Pirate speak with nautical terminology
+./snippety --tone pirate
+
+# Serious, formal tone with technical precision
+./snippety --tone serious
 ```
 
 ### Command Line Options
@@ -78,6 +104,8 @@ git add .
 |------|---------|-------------|
 | `--ollama-url` | `http://localhost:11434` | Ollama server URL |
 | `--model` | `llama3.2` | Ollama model to use for generation |
+| `--tone` | `professional` | Tone for commit messages (professional, fun, pirate, serious) |
+| `--interactive` | `false` | Interactively confirm before creating the git commit |
 
 ## Example Output
 
@@ -87,6 +115,24 @@ Generating commit message with Ollama...
 Making request to: http://localhost:11434/api/generate
 Generated commit message:
 Add user authentication middleware
+
+$ ./snippety --tone fun
+Generating commit message with Ollama...
+Generated commit message:
+✨ Add shiny new user auth middleware 🔐
+
+$ ./snippety --tone pirate
+Generating commit message with Ollama...
+Generated commit message:
+Hoist new authentication middleware aboard! ⚓
+
+$ ./snippety --interactive
+Generating commit message with Ollama...
+Generated commit message:
+Add user authentication middleware
+
+Do you want to create a commit with this message? (y/N): y
+✅ Commit created successfully!
 ```
 
 ## How It Works

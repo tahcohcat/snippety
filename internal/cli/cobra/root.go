@@ -12,6 +12,8 @@ import (
 var (
 	ollamaURL   string
 	ollamaModel string
+	showDiff    bool
+	tone        string
 )
 
 var rootCmd = &cobra.Command{
@@ -20,13 +22,15 @@ var rootCmd = &cobra.Command{
 	Long: `A CLI tool that analyzes your staged git changes and generates
 meaningful commit messages using Ollama AI based on the diff.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		git.GenerateCommitMessage(ollamaURL, ollamaModel)
+		git.GenerateCommitMessage(ollamaURL, ollamaModel, showDiff, tone)
 	},
 }
 
 func init() {
-	rootCmd.Flags().StringVar(&ollamaURL, "ollama-url", "http://localhost:11434", "Ollama server URL")
-	rootCmd.Flags().StringVar(&ollamaModel, "model", "llama3.2", "Ollama model to use for generation")
+	rootCmd.Flags().StringVar(&ollamaURL, "ollama-url", "http://localhost:11434", "ollama server URL")
+	rootCmd.Flags().StringVar(&ollamaModel, "model", "llama3.2", "ollama model to use for generation")
+	rootCmd.Flags().BoolVar(&showDiff, "show-diff", false, "show git diff output to the user")
+	rootCmd.Flags().StringVar(&tone, "tone", "professional", "tone for commit messages (professional, fun, pirate, serious)")
 }
 
 func Execute() {

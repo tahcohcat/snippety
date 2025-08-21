@@ -62,18 +62,21 @@ func (c *Client) HealthCheck(ctx context.Context) error {
 	return nil
 }
 
-func (c *Client) GenerateCommitMessage(ctx context.Context, diff string) (string, error) {
+func (c *Client) GenerateCommitMessage(ctx context.Context, diff string, tone string) (string, error) {
+	toneInstruction := getToneInstruction(tone)
+	
 	prompt := fmt.Sprintf(`You are an expert software developer. Based on the following git diff of staged changes, generate a concise, clear commit message following conventional commit format.
 
 The commit message should:
 - Be in present tense (e.g., "Add", "Fix", "Update", "Remove")
 - Be descriptive but concise (under 50 characters for the title)
 - Focus on what the change does, not how it does it
+%s
 
 Git diff:
 %s
 
-Generate only the commit message, no explanations:`, diff)
+Generate only the commit message, no explanations:`, toneInstruction, diff)
 
 	req := GenerateRequest{
 		Model:  c.Model,
@@ -113,4 +116,19 @@ Generate only the commit message, no explanations:`, diff)
 	}
 
 	return result.Response, nil
+}
+
+func getToneInstruction(tone string) string {
+	switch tone {
+	case "fun":
+		return "- Use a fun, playful tone with emojis and creative language while keeping it professional"
+	case "pirate":
+		return "- Write the commit message in pirate speak with nautical terminology (e.g., 'Hoist', 'Plunder', 'Navigate')"
+	case "serious":
+		return "- Use a very serious, formal tone with technical precision and no casual language"
+	case "professional":
+		fallthrough
+	default:
+		return "- Use a professional, clear tone"
+	}
 }

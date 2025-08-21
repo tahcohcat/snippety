@@ -12,7 +12,7 @@ import (
 	"github.com/tahcohcat/snippety/internal/ollama"
 )
 
-func GenerateCommitMessage(ollamaURL, ollamaModel string) {
+func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone string) {
 	diff, err := getStagedDiff()
 	if err != nil {
 		fmt.Printf("Error getting staged diff: %v\n", err)
@@ -22,6 +22,14 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string) {
 	if strings.TrimSpace(diff) == "" {
 		fmt.Println("No staged changes found. Please stage your changes with 'git add' first.")
 		return
+	}
+
+	if showDiff {
+		fmt.Println("Git diff output:")
+		fmt.Println("================")
+		fmt.Println(diff)
+		fmt.Println("================")
+		fmt.Println()
 	}
 
 	logrus.
@@ -44,7 +52,7 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string) {
 		return
 	}
 
-	commitMessage, err := client.GenerateCommitMessage(ctx, diff)
+	commitMessage, err := client.GenerateCommitMessage(ctx, diff, tone)
 	if err != nil {
 		fmt.Printf("Error generating commit message with ollama: %v\n", err)
 		fmt.Printf("Falling back to basic analysis...")
@@ -56,7 +64,7 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string) {
 }
 
 func getStagedDiff() (string, error) {
-	cmd := exec.Command("git", "diff", "--staged")
+	cmd := exec.Command("git", "diff", "--staged", "--summary")
 	output, err := cmd.Output()
 	if err != nil {
 		return "", fmt.Errorf("failed to get git diff: %w", err)

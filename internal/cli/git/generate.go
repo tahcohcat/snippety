@@ -14,35 +14,46 @@ import (
 	"github.com/tahcohcat/snippety/internal/ollama"
 )
 
+// Color codes for terminal output
+const (
+	ColorReset  = "\033[0m"
+	ColorGreen  = "\033[32m"
+	ColorYellow = "\033[33m"
+	ColorBlue   = "\033[34m"
+	ColorCyan   = "\033[36m"
+	ColorBold   = "\033[1m"
+	ColorRed    = "\033[31m"
+)
+
 func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone string, interactive bool, autoStage bool) {
 	if autoStage {
-		fmt.Println("Staging all changes...")
+		logrus.Debug("Staging all changes...")
 		if err := stageAllChanges(); err != nil {
-			fmt.Printf("Error staging changes: %v\n", err)
+			fmt.Printf("%sError staging changes: %v%s\n", ColorRed, err, ColorReset)
 			return
 		}
 	}
 
 	diff, err := getStagedDiff()
 	if err != nil {
-		fmt.Printf("Error getting staged diff: %v\n", err)
+		fmt.Printf("%sError getting staged diff: %v%s\n", ColorRed, err, ColorReset)
 		return
 	}
 
 	if strings.TrimSpace(diff) == "" {
 		if autoStage {
-			fmt.Println("No changes found to stage and commit.")
+			fmt.Printf("%sNo changes found to stage and commit.%s\n", ColorYellow, ColorReset)
 		} else {
-			fmt.Println("No staged changes found. Please stage your changes with 'git add' first.")
+			fmt.Printf("%sNo staged changes found. Please stage your changes with 'git add' first.%s\n", ColorYellow, ColorReset)
 		}
 		return
 	}
 
 	if showDiff {
-		fmt.Println("Git diff output:")
-		fmt.Println("================")
+		fmt.Printf("%s%sGit diff output:%s\n", ColorBold, ColorBlue, ColorReset)
+		fmt.Printf("%s================%s\n", ColorBlue, ColorReset)
 		fmt.Println(diff)
-		fmt.Println("================")
+		fmt.Printf("%s================%s\n", ColorBlue, ColorReset)
 		fmt.Println()
 	}
 
@@ -73,8 +84,8 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 	}
 
 	commitMessage = strings.TrimSpace(commitMessage)
-	fmt.Println("Generated commit message:")
-	fmt.Println(commitMessage)
+	fmt.Printf("%sGenerated commit message:%s %s%s%s\n", 
+		ColorBold+ColorBlue, ColorReset, ColorGreen, commitMessage, ColorReset)
 
 	if interactive {
 		fmt.Print("\nDo you want to create a commit with this message? (y/N): ")
@@ -88,16 +99,16 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 		response = strings.ToLower(strings.TrimSpace(response))
 		if response == "y" || response == "yes" {
 			if err := createCommit(commitMessage); err != nil {
-				fmt.Printf("Error creating commit: %v\n", err)
+				fmt.Printf("%sError creating commit: %v%s\n", ColorRed, err, ColorReset)
 				return
 			}
-			fmt.Println("✅ Commit created successfully!")
+			fmt.Printf("%s✅ Commit created successfully!%s\n", ColorGreen, ColorReset)
 
 			if err := pushCommit(); err != nil {
-				fmt.Printf("Error pushing commit: %v\n", err)
+				fmt.Printf("%sError pushing commit: %v%s\n", ColorRed, err, ColorReset)
 				return
 			}
-			fmt.Println("🚀Commit  pushed successfully!")
+			fmt.Printf("%s🚀 Commit pushed successfully!%s\n", ColorCyan, ColorReset)
 		} else {
 			fmt.Println("Commit not created.")
 		}

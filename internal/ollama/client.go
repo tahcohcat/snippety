@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -67,18 +68,18 @@ func (c *Client) HealthCheck(ctx context.Context) error {
 func (c *Client) GenerateCommitMessage(ctx context.Context, diff string, tone string) (string, error) {
 	toneInstruction := getToneInstruction(tone)
 
-	prompt := fmt.Sprintf(`You are an expert software developer. Based on the following git diff of staged changes, generate a concise, clear commit message following conventional commit format.
+	prompt := fmt.Sprintf(`Based on the git diff below, respond with ONLY the commit message. No explanations, no additional text, no formatting - just the commit message itself.
 
-The commit message should:
-- Be in present tense (e.g., "Add", "Fix", "Update", "Remove")
-- Be descriptive but concise (under 50 characters for the title)
-- Focus on what the change does, not how it does it
+Requirements:
+- Present tense (Add, Fix, Update, Remove)
+- Under 50 characters
+- Conventional commit format
 %s
 
 Git diff:
 %s
 
-Generate only the commit message, no explanations:`, toneInstruction, diff)
+Commit message:`, toneInstruction, diff)
 
 	req := GenerateRequest{
 		Model:  c.Model,
@@ -117,7 +118,7 @@ Generate only the commit message, no explanations:`, toneInstruction, diff)
 		return "", fmt.Errorf("failed to decode response: %w", err)
 	}
 
-	return result.Response, nil
+	return strings.TrimSpace(result.Response), nil
 }
 
 func getToneInstruction(tone string) string {

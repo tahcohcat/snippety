@@ -171,6 +171,22 @@ func pushCommit() error {
 	cmd := exec.Command("git", "push")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
+		// Check if this is an upstream branch error
+		if strings.Contains(string(output), "has no upstream branch") {
+			// Get current branch name and set upstream
+			branchName, branchErr := getCurrentBranch()
+			if branchErr != nil {
+				return fmt.Errorf("git push failed and could not get branch name: %w", err)
+			}
+			
+			// Try push with set-upstream
+			upstreamCmd := exec.Command("git", "push", "--set-upstream", "origin", branchName)
+			upstreamOutput, upstreamErr := upstreamCmd.CombinedOutput()
+			if upstreamErr != nil {
+				return fmt.Errorf("git push --set-upstream failed: %w\nOutput: %s", upstreamErr, string(upstreamOutput))
+			}
+			return nil
+		}
 		return fmt.Errorf("git push failed: %w\nOutput: %s", err, string(output))
 	}
 	return nil

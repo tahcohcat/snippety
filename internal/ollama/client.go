@@ -89,6 +89,7 @@ Description requirements:
 - 2-3 sentences explaining what was changed and why
 - Include technical details about the implementation
 - Mention any test cases or validation added
+- No prefix needed just the description itself
 
 Git diff:
 %s`, toneInstruction, diff)
@@ -134,10 +135,13 @@ Git diff:
 }
 
 func parseCommitMessage(response string) CommitMessage {
+	// Debug: log the raw response to understand the format
+	logrus.Debugf("Raw LLM response: %q", response)
+
 	lines := strings.Split(strings.TrimSpace(response), "\n")
-	
+
 	var title, description string
-	
+
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		if strings.HasPrefix(line, "TITLE:") {
@@ -146,23 +150,27 @@ func parseCommitMessage(response string) CommitMessage {
 			description = strings.TrimSpace(strings.TrimPrefix(line, "DESCRIPTION:"))
 		}
 	}
-	
+
 	// Fallback if the LLM didn't follow the format
 	if title == "" && description == "" {
 		// Use the first line as title and rest as description
 		if len(lines) > 0 {
-			title = lines[0]
+			title = strings.TrimSpace(lines[0])
 		}
 		if len(lines) > 1 {
-			description = strings.Join(lines[1:], " ")
+			description = strings.TrimSpace(strings.Join(lines[1:], " "))
 		}
 	}
-	
+
 	// If still no description, generate a basic one
 	if description == "" {
 		description = "Code changes as shown in the git diff."
 	}
-	
+
+	// Debug: log parsed components
+	logrus.Debugf("Parsed title: %q", title)
+	logrus.Debugf("Parsed description: %q", description)
+
 	return CommitMessage{
 		Title:       title,
 		Description: description,

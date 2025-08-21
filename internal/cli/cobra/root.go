@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/snippety/internal/cli/git"
+	"github.com/tahcohcat/snippety/internal/cli/git"
 )
 
 var (
@@ -15,7 +15,7 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "commit-gen",
+	Use:   "snippety",
 	Short: "Generate commit messages from staged git diff using Ollama",
 	Long: `A CLI tool that analyzes your staged git changes and generates
 meaningful commit messages using Ollama AI based on the diff.`,

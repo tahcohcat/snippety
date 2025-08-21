@@ -20,7 +20,7 @@ AI-powered Go CLI tool that generates commit messages from staged git changes us
 
 ```bash
 # Clone the repository
-git clone https://github.com/snippety/snippety
+git clone https://github.com/tahcohcat/snippety/snippety
 cd snippety
 
 # Build the binary

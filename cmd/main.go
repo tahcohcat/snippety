@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/snippety/internal/cli/cobra"
+	"github.com/tahcohcat/snippety/internal/cli/cobra"
 )
 
 func main() {

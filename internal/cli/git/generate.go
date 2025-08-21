@@ -9,7 +9,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/snippety/internal/ollama"
+	"github.com/tahcohcat/snippety/internal/ollama"
 )
 
 func GenerateCommitMessage(ollamaURL, ollamaModel string) {
@@ -28,7 +28,6 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string) {
 		WithField("llm", "ollama").
 		WithField("url", ollamaURL).
 		WithField("model", ollamaModel).
-		WithField("diff", diff).
 		Info("generating commit message")
 
 	client := ollama.NewClient(ollamaURL, ollamaModel)

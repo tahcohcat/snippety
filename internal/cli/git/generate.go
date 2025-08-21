@@ -68,24 +68,32 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 	defer cancel()
 
 	// Check if Ollama is available
-	var commitMessage string
+	var commitMsg ollama.CommitMessage
 	if err := client.HealthCheck(ctx); err != nil {
 		fmt.Printf("Ollama health check failed: %v\n", err)
 		fmt.Println("Falling back to basic analysis...")
-		commitMessage = analyzeAndGenerateMessage(diff)
+		title := analyzeAndGenerateMessage(diff)
+		commitMsg = ollama.CommitMessage{
+			Title:       title,
+			Description: "Code changes as analyzed from the git diff.",
+		}
 	} else {
 		var err error
-		commitMessage, err = client.GenerateCommitMessage(ctx, diff, tone)
+		commitMsg, err = client.GenerateCommitMessage(ctx, diff, tone)
 		if err != nil {
 			fmt.Printf("Error generating commit message with ollama: %v\n", err)
 			fmt.Printf("Falling back to basic analysis...")
-			commitMessage = analyzeAndGenerateMessage(diff)
+			title := analyzeAndGenerateMessage(diff)
+			commitMsg = ollama.CommitMessage{
+				Title:       title,
+				Description: "Code changes as analyzed from the git diff.",
+			}
 		}
 	}
 
-	commitMessage = strings.TrimSpace(commitMessage)
-	fmt.Printf("%sGenerated commit message:%s %s%s%s\n",
-		ColorBold+ColorBlue, ColorReset, ColorGreen, commitMessage, ColorReset)
+	fmt.Printf("%sGenerated commit message:%s\n", ColorBold+ColorBlue, ColorReset)
+	fmt.Printf("%sTitle:%s %s%s%s\n", ColorBold+ColorCyan, ColorReset, ColorGreen, commitMsg.Title, ColorReset)
+	fmt.Printf("%sDescription:%s %s%s%s\n", ColorBold+ColorCyan, ColorReset, ColorYellow, commitMsg.Description, ColorReset)
 
 	if interactive {
 		fmt.Print("\nDo you want to create a commit with this message? (y/N): ")
@@ -98,7 +106,7 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 
 		response = strings.ToLower(strings.TrimSpace(response))
 		if response == "y" || response == "yes" {
-			if err := createCommit(commitMessage); err != nil {
+			if err := createCommit(commitMsg.Title, commitMsg.Description); err != nil {
 				fmt.Printf("%sError creating commit: %v%s\n", ColorRed, err, ColorReset)
 				return
 			}
@@ -133,8 +141,8 @@ func stageAllChanges() error {
 	return nil
 }
 
-func createCommit(message string) error {
-	cmd := exec.Command("git", "commit", "-m", message)
+func createCommit(title, description string) error {
+	cmd := exec.Command("git", "commit", "-m", title, "-m", description)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("git commit failed: %w\nOutput: %s", err, string(output))

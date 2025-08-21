@@ -4,12 +4,14 @@ AI-powered Go CLI tool that generates commit messages from staged git changes us
 
 ## Features
 
-- 🤖 **AI-Generated Messages**: Uses Ollama to generate meaningful commit messages
+- 🤖 **AI-Generated Messages**: Uses Ollama to generate meaningful commit messages with both title and detailed description
+- 🎫 **Smart Branch Detection**: Automatically detects ticket prefixes from branch names (e.g., `BP-1234-feature` → `BP-1234: commit title`)
 - 📝 **Conventional Commits**: Follows conventional commit format (Add, Fix, Update, Remove)
 - 🎭 **Customizable Tone**: Choose from professional, fun, pirate, or serious tones
 - 🤝 **Interactive Mode**: Optionally confirm before creating and pushing commits with generated messages
 - 📁 **Auto-staging**: Automatically stages all changes with `git add -A` before analysis (can be disabled)
 - 🔄 **Fallback Support**: Falls back to rule-based generation if Ollama is unavailable
+- 🌊 **Smart Push Handling**: Automatically sets upstream for new branches during push
 - ⚙️ **Configurable**: Supports custom Ollama endpoints and models
 - 🚀 **Fast & Lightweight**: Built with Go and Cobra CLI framework
 
@@ -112,48 +114,83 @@ ollama pull llama3.2
 
 ## Example Output
 
+### Basic Usage
 ```bash
 $ ./snippety
 Staging all changes...
 Generating commit message with Ollama...
-Making request to: http://localhost:11434/api/generate
 Generated commit message:
-Add user authentication middleware
+Title: Add user authentication middleware
+Description: Implemented JWT-based authentication middleware for API routes. Added validation for bearer tokens and user session management. Includes unit tests for authentication edge cases.
+```
 
-$ ./snippety --tone fun
-Generating commit message with Ollama...
-Generated commit message:
-✨ Add shiny new user auth middleware 🔐
-
-$ ./snippety --tone pirate
-Generating commit message with Ollama...
-Generated commit message:
-Hoist new authentication middleware aboard! ⚓
-
-$ ./snippety --tone haiku
-Generating commit message with Ollama...
-Generated commit message:
-Auth middleware flows / Through the codebase like fresh streams / Security blooms bright
-
-$ ./snippety --interactive
+### With Branch Ticket Detection
+```bash
+# On branch: FEAT-1234-auth-middleware
+$ ./snippety
 Staging all changes...
 Generating commit message with Ollama...
 Generated commit message:
-Add user authentication middleware
+Title: FEAT-1234: Add user authentication middleware
+Description: Implemented JWT-based authentication middleware for API routes. Added validation for bearer tokens and user session management. Includes unit tests for authentication edge cases.
+```
+
+### Different Tones
+```bash
+$ ./snippety --tone fun
+Generated commit message:
+Title: ✨ Add shiny new user auth middleware 🔐
+Description: Whipped up some awesome JWT magic for our API routes! Now we've got bearer token validation and user sessions that actually work. Added tests because we're responsible developers! 🎉
+
+$ ./snippety --tone pirate
+Generated commit message:
+Title: Hoist new authentication middleware aboard! ⚓
+Description: Arrr! We've plundered the finest JWT treasures and secured our API routes from scurvy hackers. Added proper token validation and session management, plus tests to keep the crew honest, matey!
+```
+
+### Interactive Mode
+```bash
+$ ./snippety --interactive
+Staging all changes...
+Generated commit message:
+Title: FEAT-1234: Add user authentication middleware
+Description: Implemented JWT-based authentication middleware for API routes. Added validation for bearer tokens and user session management. Includes unit tests for authentication edge cases.
 
 Do you want to create a commit with this message? (y/N): y
 ✅ Commit created successfully!
 🚀 Commit pushed successfully!
 ```
 
+### Branch Without Upstream
+```bash
+$ ./snippety --interactive
+# ... commit creation ...
+✅ Commit created successfully!
+🚀 Commit pushed successfully!
+# Automatically runs: git push --set-upstream origin feat/NEW-456-feature
+```
+
 ## How It Works
 
-1. **Auto-staging**: Automatically runs `git add -A` to stage all changes (unless disabled)
-2. **Git Diff Analysis**: Retrieves staged changes using `git diff --staged`
-3. **AI Processing**: Sends the diff to Ollama with a specialized prompt
-4. **Commit Generation**: Returns a conventional commit message
-5. **Interactive Confirmation**: Optionally prompts user to create commit and push
-6. **Fallback**: Uses rule-based analysis if Ollama is unavailable
+1. **Branch Detection**: Detects current branch and extracts ticket prefixes (e.g., `FEAT-1234-feature` → `FEAT-1234:`)
+2. **Auto-staging**: Automatically runs `git add -A` to stage all changes (unless disabled)
+3. **Git Diff Analysis**: Retrieves staged changes using `git diff --staged`
+4. **AI Processing**: Sends the diff to Ollama with a specialized prompt for title and description generation
+5. **Commit Generation**: Returns a structured commit message with title and detailed description
+6. **Prefix Integration**: Automatically prepends ticket prefix to commit title
+7. **Interactive Confirmation**: Optionally prompts user to create commit and push
+8. **Smart Push**: Automatically sets upstream for new branches during push
+9. **Fallback**: Uses rule-based analysis if Ollama is unavailable
+
+## Commit Message Format
+
+Snippety generates commits using the dual `-m` flag format:
+
+```bash
+git commit -m "TICKET-123: Short descriptive title" -m "Detailed description with technical implementation details, changes made, and any test cases added."
+```
+
+This creates commits with both a concise title (≤50 characters) and a comprehensive description for better commit history.
 
 ## Supported Models
 
@@ -185,6 +222,18 @@ ollama list
 - **"connection refused"**: Ollama service is not running
 - **"405 Method Not Allowed"**: Wrong URL or port
 - **"No staged changes found"**: Run `git add` to stage your changes first
+- **"has no upstream branch"**: Automatically handled - will set upstream during push
+
+### Branch Naming Patterns
+
+Snippety automatically detects and extracts ticket prefixes from these branch patterns:
+
+- `FEAT-1234-description` → `FEAT-1234: commit title`
+- `BP-5678-fix-bug` → `BP-5678: commit title` 
+- `feature/DEVOPS-999` → `DEVOPS-999: commit title`
+- `chore/PROJ-123-cleanup` → `PROJ-123: commit title`
+
+For branches like `main`, `master`, or unrecognized patterns, no prefix is added.
 
 ## Development
 

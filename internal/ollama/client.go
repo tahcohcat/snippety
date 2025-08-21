@@ -83,14 +83,13 @@ Title requirements:
 - Present tense (Add, Fix, Update, Remove)
 - Under 50 characters
 - Conventional commit format
-- No prefix needed just the message itself
 %s
 
 Description requirements:
 - 2-3 sentences explaining what was changed and why
-- Use bullet points to list the changes
 - Include technical details about the implementation
 - Mention any test cases or validation added
+- No prefix needed just the description itself
 
 Git diff:
 %s`, toneInstruction, diff)

@@ -28,10 +28,10 @@ cd snippety
 
 # Build the binary
 go mod tidy
-go build -o snippety ./cmd
+go build -o snippety ./cmd/snippety
 
 # Optional: Install globally
-go install ./cmd
+go install ./cmd/snippety
 ```
 
 ## Quick Start

@@ -18,6 +18,7 @@ var (
 	interactive bool
 	autoStage   bool
 	debug       bool
+	showVersion bool
 )
 
 var rootCmd = &cobra.Command{
@@ -32,6 +33,11 @@ meaningful commit messages using Ollama AI based on the diff.`,
 			logrus.Debug("debug mode enabled")
 		}
 
+		if showVersion {
+			fmt.Println("snippety v0.1.0")
+			return
+		}
+
 		git.GenerateCommitMessage(ollamaURL, ollamaModel, showDiff, tone, interactive, autoStage)
 	},
 }
@@ -44,6 +50,7 @@ func init() {
 	rootCmd.Flags().BoolVar(&interactive, "interactive", false, "interactively confirm before creating the git commit")
 	rootCmd.Flags().BoolVar(&autoStage, "auto-stage", true, "automatically stage all changes with 'git add -A' before generating commit message")
 	rootCmd.Flags().BoolVar(&debug, "debug", false, "enable debug mode")
+	rootCmd.Flags().BoolVar(&showVersion, "version", false, "show version")
 }
 
 func Execute() {

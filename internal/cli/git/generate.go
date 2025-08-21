@@ -80,6 +80,12 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 				return
 			}
 			fmt.Println("✅ Commit created successfully!")
+			
+			if err := pushCommit(); err != nil {
+				fmt.Printf("Error pushing commit: %v\n", err)
+				return
+			}
+			fmt.Println("🚀 Commit pushed successfully!")
 		} else {
 			fmt.Println("Commit not created.")
 		}
@@ -100,6 +106,15 @@ func createCommit(message string) error {
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("git commit failed: %w\nOutput: %s", err, string(output))
+	}
+	return nil
+}
+
+func pushCommit() error {
+	cmd := exec.Command("git", "push")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("git push failed: %w\nOutput: %s", err, string(output))
 	}
 	return nil
 }

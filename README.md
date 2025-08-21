@@ -7,7 +7,7 @@ AI-powered Go CLI tool that generates commit messages from staged git changes us
 - 🤖 **AI-Generated Messages**: Uses Ollama to generate meaningful commit messages
 - 📝 **Conventional Commits**: Follows conventional commit format (Add, Fix, Update, Remove)
 - 🎭 **Customizable Tone**: Choose from professional, fun, pirate, or serious tones
-- 🤝 **Interactive Mode**: Optionally confirm before creating commits with generated messages
+- 🤝 **Interactive Mode**: Optionally confirm before creating and pushing commits with generated messages
 - 🔄 **Fallback Support**: Falls back to rule-based generation if Ollama is unavailable
 - ⚙️ **Configurable**: Supports custom Ollama endpoints and models
 - 🚀 **Fast & Lightweight**: Built with Go and Cobra CLI framework
@@ -105,7 +105,7 @@ git add .
 | `--ollama-url` | `http://localhost:11434` | Ollama server URL |
 | `--model` | `llama3.2` | Ollama model to use for generation |
 | `--tone` | `professional` | Tone for commit messages (professional, fun, pirate, serious) |
-| `--interactive` | `false` | Interactively confirm before creating the git commit |
+| `--interactive` | `false` | Interactively confirm before creating and pushing the git commit |
 
 ## Example Output
 
@@ -133,6 +133,7 @@ Add user authentication middleware
 
 Do you want to create a commit with this message? (y/N): y
 ✅ Commit created successfully!
+🚀 Commit pushed successfully!
 ```
 
 ## How It Works

@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Client struct {
@@ -64,7 +66,7 @@ func (c *Client) HealthCheck(ctx context.Context) error {
 
 func (c *Client) GenerateCommitMessage(ctx context.Context, diff string, tone string) (string, error) {
 	toneInstruction := getToneInstruction(tone)
-	
+
 	prompt := fmt.Sprintf(`You are an expert software developer. Based on the following git diff of staged changes, generate a concise, clear commit message following conventional commit format.
 
 The commit message should:
@@ -90,8 +92,8 @@ Generate only the commit message, no explanations:`, toneInstruction, diff)
 	}
 
 	url := c.BaseURL + "/api/generate"
-	fmt.Printf("Making request to: %s\n", url)
-	
+	logrus.Debug("Making request to: %s\n", url)
+
 	httpReq, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", fmt.Errorf("failed to create request: %w", err)

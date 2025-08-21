@@ -50,7 +50,7 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 		WithField("llm", "ollama").
 		WithField("url", ollamaURL).
 		WithField("model", ollamaModel).
-		Info("generating commit message")
+		Debug("generating commit message")
 
 	client := ollama.NewClient(ollamaURL, ollamaModel)
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)

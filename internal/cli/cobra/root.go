@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/tahcohcat/snippety/internal/cli/git"
@@ -16,6 +17,7 @@ var (
 	tone        string
 	interactive bool
 	autoStage   bool
+	debug       bool
 )
 
 var rootCmd = &cobra.Command{
@@ -24,6 +26,12 @@ var rootCmd = &cobra.Command{
 	Long: `A CLI tool that analyzes your staged git changes and generates
 meaningful commit messages using Ollama AI based on the diff.`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		if debug {
+			logrus.SetLevel(logrus.DebugLevel)
+			logrus.Debug("debug mode enabled")
+		}
+
 		git.GenerateCommitMessage(ollamaURL, ollamaModel, showDiff, tone, interactive, autoStage)
 	},
 }
@@ -35,6 +43,7 @@ func init() {
 	rootCmd.Flags().StringVar(&tone, "tone", "professional", "tone for commit messages (professional, fun, pirate, serious)")
 	rootCmd.Flags().BoolVar(&interactive, "interactive", false, "interactively confirm before creating the git commit")
 	rootCmd.Flags().BoolVar(&autoStage, "auto-stage", true, "automatically stage all changes with 'git add -A' before generating commit message")
+	rootCmd.Flags().BoolVar(&debug, "debug", false, "enable debug mode")
 }
 
 func Execute() {

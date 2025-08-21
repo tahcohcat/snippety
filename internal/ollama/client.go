@@ -127,6 +127,8 @@ func getToneInstruction(tone string) string {
 		return "- Use a fun, playful tone with emojis and creative language while keeping it professional"
 	case "pirate":
 		return "- Write the commit message in pirate speak with nautical terminology (e.g., 'Hoist', 'Plunder', 'Navigate')"
+	case "haiku":
+		return "- Write the commit message as a single-line haiku with 5-7-5 syllable structure, separating each line with ' / ', capturing the essence of the code change"
 	case "serious":
 		return "- Use a very serious, formal tone with technical precision and no casual language"
 	case "professional":

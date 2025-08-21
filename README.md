@@ -93,6 +93,9 @@ ollama pull llama3.2
 # Pirate speak with nautical terminology
 ./snippety --tone pirate
 
+# Haiku poem with 5-7-5 syllable structure (single line)
+./snippety --tone haiku
+
 # Serious, formal tone with technical precision
 ./snippety --tone serious
 ```
@@ -103,7 +106,7 @@ ollama pull llama3.2
 |------|---------|-------------|
 | `--ollama-url` | `http://localhost:11434` | Ollama server URL |
 | `--model` | `llama3.2` | Ollama model to use for generation |
-| `--tone` | `professional` | Tone for commit messages (professional, fun, pirate, serious) |
+| `--tone` | `professional` | Tone for commit messages (professional, fun, pirate, haiku, serious) |
 | `--interactive` | `false` | Interactively confirm before creating and pushing the git commit |
 | `--auto-stage` | `true` | Automatically stage all changes with 'git add -A' before analysis |
 
@@ -126,6 +129,11 @@ $ ./snippety --tone pirate
 Generating commit message with Ollama...
 Generated commit message:
 Hoist new authentication middleware aboard! ⚓
+
+$ ./snippety --tone haiku
+Generating commit message with Ollama...
+Generated commit message:
+Auth middleware flows / Through the codebase like fresh streams / Security blooms bright
 
 $ ./snippety --interactive
 Staging all changes...

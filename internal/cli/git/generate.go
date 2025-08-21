@@ -84,7 +84,7 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 	}
 
 	commitMessage = strings.TrimSpace(commitMessage)
-	fmt.Printf("%sGenerated commit message:%s %s%s%s\n", 
+	fmt.Printf("%sGenerated commit message:%s %s%s%s\n",
 		ColorBold+ColorBlue, ColorReset, ColorGreen, commitMessage, ColorReset)
 
 	if interactive {
@@ -108,7 +108,7 @@ func GenerateCommitMessage(ollamaURL, ollamaModel string, showDiff bool, tone st
 				fmt.Printf("%sError pushing commit: %v%s\n", ColorRed, err, ColorReset)
 				return
 			}
-			fmt.Printf("%s🚀 Commit pushed successfully!%s\n", ColorCyan, ColorReset)
+			fmt.Printf("%s🚀Commit pushed successfully!%s\n", ColorCyan, ColorReset)
 		} else {
 			fmt.Println("Commit not created.")
 		}

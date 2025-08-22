@@ -12,7 +12,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/tahcohcat/snippety/internal/ollama"
+	"github.com/tahcohcat/snippety/internal/client/ollama"
 )
 
 // Color codes for terminal output

@@ -106,7 +106,7 @@ Git diff:
 	}
 
 	url := c.BaseURL + "/api/generate"
-	logrus.Debug("Making request to: %s\n", url)
+	logrus.Debugf("Making request to: %s", url)
 
 	httpReq, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {

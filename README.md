@@ -3,7 +3,8 @@
 [![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go)](https://golang.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/tahcohcat/snippety?style=flat-square)](https://github.com/tahcohcat/snippety/releases)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/tahcohcat/snippety/build.yml?style=flat-square)](https://github.com/tahcohcat/snippety/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/tahcohcat/snippety/ci.yml?style=flat-square)](https://github.com/tahcohcat/snippety/actions)
+[![Coverage](https://img.shields.io/codecov/c/github/tahcohcat/snippety?style=flat-square)](https://codecov.io/gh/tahcohcat/snippety)
 [![Go Report Card](https://goreportcard.com/badge/github.com/tahcohcat/snippety?style=flat-square)](https://goreportcard.com/report/github.com/tahcohcat/snippety)
 [![Ollama](https://img.shields.io/badge/Powered%20by-Ollama-FF6B35?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K)](https://ollama.ai)
 
@@ -218,19 +219,46 @@ snippety/
 ### Building from Source
 
 ```bash
-# Get dependencies
-go mod tidy
+# Using Make (recommended)
+make dev          # Install deps, build, and test
+make build        # Build binary only
+make test         # Run tests
+make test-coverage # Run tests with coverage report
 
-# Run tests (if available)
-go test ./...
-
-# Build binary
-go build -o snippety ./cmd
+# Or manually with Go commands
+go mod tidy       # Get dependencies
+go test ./...     # Run tests
+go build -o snippety ./cmd/snippety  # Build binary
 
 # Cross-compile for different platforms
-GOOS=linux GOARCH=amd64 go build -o snippety-linux ./cmd
-GOOS=windows GOARCH=amd64 go build -o snippety.exe ./cmd
+make build-all    # Build for all platforms (Linux, macOS, Windows)
 ```
+
+### Testing
+
+The project includes comprehensive unit tests covering:
+
+- **Ticket prefix extraction** from branch names
+- **Commit message parsing** with various LLM response formats  
+- **Fallback message generation** when Ollama is unavailable
+- **CLI flag parsing and validation**
+- **Client configuration and setup**
+
+```bash
+# Run all tests
+make test
+
+# Run tests with verbose output  
+make test-verbose
+
+# Generate coverage report
+make test-coverage
+```
+
+**Test Coverage:**
+- `internal/cli/git`: ~30% (core git functionality)
+- `internal/client/ollama`: ~48% (LLM client and parsing)
+- `internal/cli/cobra`: ~44% (CLI command parsing)
 
 ## Contributing
 

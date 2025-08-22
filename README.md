@@ -18,13 +18,16 @@ AI-powered Go CLI tool that generates commit messages from staged git changes us
 
 ## Features
 
-- 🤖 **AI-Generated Messages**: Uses Ollama to generate meaningful commit messages
+- 🤖 **AI-Generated Messages**: Uses Ollama to generate meaningful commit messages with both title and detailed description
+- 🎫 **Smart Branch Detection**: Automatically detects ticket prefixes from branch names (e.g., `BP-1234-feature` → `BP-1234: commit title`)
 - 📝 **Conventional Commits**: Follows conventional commit format (Add, Fix, Update, Remove)
-- 🎭 **Customizable Tone**: Choose from professional, fun, pirate, or serious tones
+- 🎭 **Flexible Tones**: Choose from built-in tones (professional, fun, pirate, haiku, serious) or specify custom tones
 - 🤝 **Interactive Mode**: Optionally confirm before creating and pushing commits with generated messages
 - 📁 **Auto-staging**: Automatically stages all changes with `git add -A` before analysis (can be disabled)
 - 🔄 **Fallback Support**: Falls back to rule-based generation if Ollama is unavailable
+- 🌊 **Smart Push Handling**: Automatically sets upstream for new branches during push
 - ⚙️ **Configurable**: Supports custom Ollama endpoints and models
+- 🧪 **Well-Tested**: Comprehensive unit test coverage for reliability
 - 🚀 **Fast & Lightweight**: Built with Go and Cobra CLI framework
 
 ## Prerequisites
@@ -176,12 +179,16 @@ Do you want to create a commit with this message? (y/N): y
 
 ## How It Works
 
-1. **Auto-staging**: Automatically runs `git add -A` to stage all changes (unless disabled)
-2. **Git Diff Analysis**: Retrieves staged changes using `git diff --staged`
-3. **AI Processing**: Sends the diff to Ollama with a specialized prompt
-4. **Commit Generation**: Returns a conventional commit message
-5. **Interactive Confirmation**: Optionally prompts user to create commit and push
-6. **Fallback**: Uses rule-based analysis if Ollama is unavailable
+1. **Branch Detection**: Detects current branch and extracts ticket prefixes (e.g., `FEAT-1234-feature` → `FEAT-1234:`)
+2. **Auto-staging**: Automatically runs `git add -A` to stage all changes (unless disabled)
+3. **Git Diff Analysis**: Retrieves staged changes using `git diff --staged`
+4. **AI Processing**: Sends the diff to Ollama with a specialized prompt for title and description generation
+5. **Tone Application**: Applies built-in or custom tone instructions to the AI prompt
+6. **Commit Generation**: Returns a structured commit message with title and detailed description
+7. **Prefix Integration**: Automatically prepends ticket prefix to commit title
+8. **Interactive Confirmation**: Optionally prompts user to create commit and push
+9. **Smart Push**: Automatically sets upstream for new branches during push
+10. **Fallback**: Uses rule-based analysis if Ollama is unavailable
 
 ## Supported Models
 
@@ -270,9 +277,16 @@ make test-coverage
 ```
 
 **Test Coverage:**
-- `internal/cli/git`: ~30% (core git functionality)
-- `internal/client/ollama`: ~48% (LLM client and parsing)
-- `internal/cli/cobra`: ~44% (CLI command parsing)
+- `internal/cli/git`: ~30% (core git functionality, branch detection, fallback generation)
+- `internal/client/ollama`: ~48% (LLM client, response parsing, tone handling)
+- `internal/cli/cobra`: ~44% (CLI command parsing, flag validation, custom tones)
+
+**Key Test Areas:**
+- ✅ Ticket prefix extraction from 17+ branch name patterns
+- ✅ Commit message parsing with 11 different LLM response formats
+- ✅ Fallback message generation for 8 git diff scenarios  
+- ✅ Custom and built-in tone instruction generation
+- ✅ CLI flag parsing and validation
 
 ## Contributing
 

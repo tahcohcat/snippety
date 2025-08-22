@@ -119,52 +119,87 @@ func TestGetToneInstruction(t *testing.T) {
 		{
 			name:     "Professional tone (default)",
 			tone:     "professional",
-			expected: "- Use a professional, clear tone",
+			expected: "TONE INSTRUCTION: Write BOTH the title and description using a professional, clear tone.",
 		},
 		{
 			name:     "Fun tone",
 			tone:     "fun",
-			expected: "- Use a fun, playful tone with emojis and creative language while keeping it professional",
+			expected: "TONE INSTRUCTION: Write BOTH the title and description using a fun, playful tone with emojis and creative language while keeping it professional.",
 		},
 		{
 			name:     "Pirate tone",
 			tone:     "pirate",
-			expected: "- Write the commit message in pirate speak with nautical terminology (e.g., 'Hoist', 'Plunder', 'Navigate')",
+			expected: "TONE INSTRUCTION: Write BOTH the title and description in pirate speak with nautical terminology (e.g., 'Hoist', 'Plunder', 'Navigate', 'Arrr', 'matey').",
 		},
 		{
 			name:     "Haiku tone",
 			tone:     "haiku",
-			expected: "- Write the commit message as a single-line haiku with 5-7-5 syllable structure, separating each line with ' / ', capturing the essence of the code change",
+			expected: "TONE INSTRUCTION: Write the TITLE as a single-line haiku with 5-7-5 syllable structure, separating each line with ' / '. Write the description in a poetic, zen-like tone.",
 		},
 		{
 			name:     "Serious tone",
 			tone:     "serious",
-			expected: "- Use a very serious, formal tone with technical precision and no casual language",
+			expected: "TONE INSTRUCTION: Write BOTH the title and description using a very serious, formal tone with technical precision and no casual language.",
 		},
 		{
-			name:     "Unknown tone (treated as custom)",
-			tone:     "unknown",
-			expected: "- Use a unknown tone for the commit message",
+			name: "Unknown tone (treated as custom)",
+			tone: "unknown",
+			expected: `TONE INSTRUCTION: Write BOTH the title and description using a unknown tone. 
+
+Examples of how to apply this tone:
+- If the tone is "like a joke" or "funny": Use humor, puns, wordplay, or amusing language while keeping it understandable
+- If the tone is "dramatic": Use intense, theatrical language with strong emotions and vivid descriptions  
+- If the tone is "casual": Use relaxed, informal language like you're talking to a friend
+- If the tone is "poetic": Use metaphors, rhythm, and beautiful imagery
+- If the tone is "sarcastic": Use irony and subtle mockery while still being informative
+- If the tone is a specific style (e.g., "like Shakespeare"): Mimic the vocabulary, sentence structure, and mannerisms of that style
+
+Be creative and fully commit to this unknown tone in BOTH the title and description. Don't just mention the tone - actually write in that style.`,
 		},
 		{
-			name:     "Empty tone (fallback to custom)",
-			tone:     "",
-			expected: "- Use a  tone for the commit message",
+			name: "Custom tone - casual",
+			tone: "casual",
+			expected: `TONE INSTRUCTION: Write BOTH the title and description using a casual tone. 
+
+Examples of how to apply this tone:
+- If the tone is "like a joke" or "funny": Use humor, puns, wordplay, or amusing language while keeping it understandable
+- If the tone is "dramatic": Use intense, theatrical language with strong emotions and vivid descriptions  
+- If the tone is "casual": Use relaxed, informal language like you're talking to a friend
+- If the tone is "poetic": Use metaphors, rhythm, and beautiful imagery
+- If the tone is "sarcastic": Use irony and subtle mockery while still being informative
+- If the tone is a specific style (e.g., "like Shakespeare"): Mimic the vocabulary, sentence structure, and mannerisms of that style
+
+Be creative and fully commit to this casual tone in BOTH the title and description. Don't just mention the tone - actually write in that style.`,
 		},
 		{
-			name:     "Custom tone - casual",
-			tone:     "casual",
-			expected: "- Use a casual tone for the commit message",
+			name: "Custom tone - like a 1950s sports announcer",
+			tone: "like a 1950s sports announcer",
+			expected: `TONE INSTRUCTION: Write BOTH the title and description using a like a 1950s sports announcer tone. 
+
+Examples of how to apply this tone:
+- If the tone is "like a joke" or "funny": Use humor, puns, wordplay, or amusing language while keeping it understandable
+- If the tone is "dramatic": Use intense, theatrical language with strong emotions and vivid descriptions  
+- If the tone is "casual": Use relaxed, informal language like you're talking to a friend
+- If the tone is "poetic": Use metaphors, rhythm, and beautiful imagery
+- If the tone is "sarcastic": Use irony and subtle mockery while still being informative
+- If the tone is a specific style (e.g., "like Shakespeare"): Mimic the vocabulary, sentence structure, and mannerisms of that style
+
+Be creative and fully commit to this like a 1950s sports announcer tone in BOTH the title and description. Don't just mention the tone - actually write in that style.`,
 		},
 		{
-			name:     "Custom tone - dramatic",
-			tone:     "dramatic",
-			expected: "- Use a dramatic tone for the commit message",
-		},
-		{
-			name:     "Custom tone - technical",
-			tone:     "technical",
-			expected: "- Use a technical tone for the commit message",
+			name: "Empty tone (fallback to custom)",
+			tone: "",
+			expected: `TONE INSTRUCTION: Write BOTH the title and description using a  tone. 
+
+Examples of how to apply this tone:
+- If the tone is "like a joke" or "funny": Use humor, puns, wordplay, or amusing language while keeping it understandable
+- If the tone is "dramatic": Use intense, theatrical language with strong emotions and vivid descriptions  
+- If the tone is "casual": Use relaxed, informal language like you're talking to a friend
+- If the tone is "poetic": Use metaphors, rhythm, and beautiful imagery
+- If the tone is "sarcastic": Use irony and subtle mockery while still being informative
+- If the tone is a specific style (e.g., "like Shakespeare"): Mimic the vocabulary, sentence structure, and mannerisms of that style
+
+Be creative and fully commit to this  tone in BOTH the title and description. Don't just mention the tone - actually write in that style.`,
 		},
 	}
 

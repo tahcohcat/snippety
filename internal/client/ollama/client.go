@@ -75,6 +75,8 @@ func (c *Client) GenerateCommitMessage(ctx context.Context, diff string, tone st
 
 	prompt := fmt.Sprintf(`Based on the git diff below, generate a commit message with both a title and description.
 
+%s
+
 Respond with exactly this format:
 TITLE: [short commit title]
 DESCRIPTION: [detailed description]
@@ -83,7 +85,6 @@ Title requirements:
 - Present tense (Add, Fix, Update, Remove)
 - Under 50 characters
 - Conventional commit format
-%s
 
 Description requirements:
 - 2-3 sentences explaining what was changed and why
@@ -182,17 +183,27 @@ func parseCommitMessage(response string) CommitMessage {
 func getToneInstruction(tone string) string {
 	switch tone {
 	case "fun":
-		return "- Use a fun, playful tone with emojis and creative language while keeping it professional"
+		return "TONE INSTRUCTION: Write BOTH the title and description using a fun, playful tone with emojis and creative language while keeping it professional."
 	case "pirate":
-		return "- Write the commit message in pirate speak with nautical terminology (e.g., 'Hoist', 'Plunder', 'Navigate')"
+		return "TONE INSTRUCTION: Write BOTH the title and description in pirate speak with nautical terminology (e.g., 'Hoist', 'Plunder', 'Navigate', 'Arrr', 'matey')."
 	case "haiku":
-		return "- Write the commit message as a single-line haiku with 5-7-5 syllable structure, separating each line with ' / ', capturing the essence of the code change"
+		return "TONE INSTRUCTION: Write the TITLE as a single-line haiku with 5-7-5 syllable structure, separating each line with ' / '. Write the description in a poetic, zen-like tone."
 	case "serious":
-		return "- Use a very serious, formal tone with technical precision and no casual language"
+		return "TONE INSTRUCTION: Write BOTH the title and description using a very serious, formal tone with technical precision and no casual language."
 	case "professional":
-		return "- Use a professional, clear tone"
+		return "TONE INSTRUCTION: Write BOTH the title and description using a professional, clear tone."
 	default:
 		// Custom tone provided by user
-		return fmt.Sprintf("- Use a %s tone for the commit message", tone)
+		return fmt.Sprintf(`TONE INSTRUCTION: Write BOTH the title and description using a %s tone. 
+
+Examples of how to apply this tone:
+- If the tone is "like a joke" or "funny": Use humor, puns, wordplay, or amusing language while keeping it understandable
+- If the tone is "dramatic": Use intense, theatrical language with strong emotions and vivid descriptions  
+- If the tone is "casual": Use relaxed, informal language like you're talking to a friend
+- If the tone is "poetic": Use metaphors, rhythm, and beautiful imagery
+- If the tone is "sarcastic": Use irony and subtle mockery while still being informative
+- If the tone is a specific style (e.g., "like Shakespeare"): Mimic the vocabulary, sentence structure, and mannerisms of that style
+
+Be creative and fully commit to this %s tone in BOTH the title and description. Don't just mention the tone - actually write in that style.`, tone, tone)
 	}
 }

@@ -97,6 +97,8 @@ ollama pull llama3.2
 ```
 
 ### Tone Options
+
+#### Built-in Tones
 ```bash
 # Professional tone (default)
 ./snippety --tone professional
@@ -114,13 +116,25 @@ ollama pull llama3.2
 ./snippety --tone serious
 ```
 
+#### Custom Tones
+You can also specify any custom tone as a string:
+```bash
+# Custom tones - the AI will interpret and apply the tone
+./snippety --tone casual
+./snippety --tone dramatic
+./snippety --tone technical
+./snippety --tone poetic
+./snippety --tone "like a tech startup CEO"
+./snippety --tone "in the style of Shakespeare"
+```
+
 ### Command Line Options
 
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--ollama-url` | `http://localhost:11434` | Ollama server URL |
 | `--model` | `llama3.2` | Ollama model to use for generation |
-| `--tone` | `professional` | Tone for commit messages (professional, fun, pirate, haiku, serious) |
+| `--tone` | `professional` | Tone for commit messages (professional, fun, pirate, haiku, serious, or custom) |
 | `--interactive` | `false` | Interactively confirm before creating and pushing the git commit |
 | `--auto-stage` | `true` | Automatically stage all changes with 'git add -A' before analysis |
 

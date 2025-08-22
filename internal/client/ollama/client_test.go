@@ -142,14 +142,29 @@ func TestGetToneInstruction(t *testing.T) {
 			expected: "- Use a very serious, formal tone with technical precision and no casual language",
 		},
 		{
-			name:     "Unknown tone (fallback to professional)",
+			name:     "Unknown tone (treated as custom)",
 			tone:     "unknown",
-			expected: "- Use a professional, clear tone",
+			expected: "- Use a unknown tone for the commit message",
 		},
 		{
-			name:     "Empty tone (fallback to professional)",
+			name:     "Empty tone (fallback to custom)",
 			tone:     "",
-			expected: "- Use a professional, clear tone",
+			expected: "- Use a  tone for the commit message",
+		},
+		{
+			name:     "Custom tone - casual",
+			tone:     "casual",
+			expected: "- Use a casual tone for the commit message",
+		},
+		{
+			name:     "Custom tone - dramatic",
+			tone:     "dramatic",
+			expected: "- Use a dramatic tone for the commit message",
+		},
+		{
+			name:     "Custom tone - technical",
+			tone:     "technical",
+			expected: "- Use a technical tone for the commit message",
 		},
 	}
 

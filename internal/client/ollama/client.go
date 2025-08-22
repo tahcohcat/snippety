@@ -106,7 +106,9 @@ Git diff:
 	}
 
 	url := c.BaseURL + "/api/generate"
-	logrus.Debugf("Making request to: %s", url)
+	logrus.
+		WithField("request.prompt", req.Prompt).
+		Debugf("Making request to:%s", url)
 
 	httpReq, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(jsonData))
 	if err != nil {
@@ -188,8 +190,9 @@ func getToneInstruction(tone string) string {
 	case "serious":
 		return "- Use a very serious, formal tone with technical precision and no casual language"
 	case "professional":
-		fallthrough
-	default:
 		return "- Use a professional, clear tone"
+	default:
+		// Custom tone provided by user
+		return fmt.Sprintf("- Use a %s tone for the commit message", tone)
 	}
 }

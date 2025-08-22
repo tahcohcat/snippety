@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/tahcohcat/snippety?style=flat-square)](https://github.com/tahcohcat/snippety/releases)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/tahcohcat/snippety/ci.yml?style=flat-square)](https://github.com/tahcohcat/snippety/actions)
-[![Coverage](https://img.shields.io/codecov/c/github/tahcohcat/snippety?style=flat-square)](https://codecov.io/gh/tahcohcat/snippety)
+[![Coverage](https://img.shields.io/badge/coverage-~40%25-orange?style=flat-square)](https://github.com/tahcohcat/snippety/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/tahcohcat/snippety?style=flat-square)](https://goreportcard.com/report/github.com/tahcohcat/snippety)
 [![Ollama](https://img.shields.io/badge/Powered%20by-Ollama-FF6B35?style=flat-square&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJMMTMuMDkgOC4yNkwyMCA5TDEzLjA5IDE1Ljc0TDEyIDIyTDEwLjkxIDE1Ljc0TDQgOUwxMC45MSA4LjI2TDEyIDJaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K)](https://ollama.ai)
 

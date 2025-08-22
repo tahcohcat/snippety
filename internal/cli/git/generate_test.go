@@ -239,8 +239,8 @@ index 2345678..8901bcd 100644
 			expected: "Update 2 files",
 		},
 		{
-			name: "Empty diff",
-			diff: "",
+			name:     "Empty diff",
+			diff:     "",
 			expected: "Update project files",
 		},
 	}

@@ -95,7 +95,7 @@ func TestRootCommand(t *testing.T) {
 				if !showVersion {
 					t.Error("Expected showVersion to be true")
 				}
-				// Note: We can't easily test the actual version output without 
+				// Note: We can't easily test the actual version output without
 				// running the command, but we can test the flag parsing
 			},
 		},
@@ -162,12 +162,12 @@ meaningful commit messages using Ollama AI based on the diff.`,
 
 func TestToneValidation(t *testing.T) {
 	validTones := []string{"professional", "fun", "pirate", "haiku", "serious"}
-	
+
 	for _, validTone := range validTones {
 		t.Run("Valid tone: "+validTone, func(t *testing.T) {
 			// Reset flags
 			tone = "professional"
-			
+
 			cmd := &cobra.Command{
 				Use: "snippety",
 				Run: func(cmd *cobra.Command, args []string) {
@@ -175,14 +175,14 @@ func TestToneValidation(t *testing.T) {
 				},
 			}
 			cmd.Flags().StringVar(&tone, "tone", "professional", "tone for commit messages")
-			
+
 			cmd.SetArgs([]string{"--tone", validTone})
 			err := cmd.Execute()
-			
+
 			if err != nil {
 				t.Errorf("Valid tone %s should not cause error: %v", validTone, err)
 			}
-			
+
 			if tone != validTone {
 				t.Errorf("Expected tone to be %s, got %s", validTone, tone)
 			}
@@ -194,34 +194,34 @@ func TestToneValidation(t *testing.T) {
 func TestCommandIsolation(t *testing.T) {
 	// This test ensures our command can be instantiated multiple times
 	// without global state conflicts
-	
+
 	cmd1 := &cobra.Command{Use: "test1"}
 	cmd1.Flags().StringVar(&ollamaURL, "ollama-url", "http://localhost:11434", "")
-	
-	cmd2 := &cobra.Command{Use: "test2"}  
+
+	cmd2 := &cobra.Command{Use: "test2"}
 	cmd2.Flags().StringVar(&ollamaURL, "ollama-url", "http://localhost:11434", "")
-	
+
 	// Set different values
 	cmd1.SetArgs([]string{"--ollama-url", "http://server1:8080"})
 	cmd2.SetArgs([]string{"--ollama-url", "http://server2:9090"})
-	
+
 	// Execute cmd1
 	ollamaURL = "http://localhost:11434" // reset
 	err1 := cmd1.Execute()
 	url1 := ollamaURL
-	
-	// Execute cmd2  
+
+	// Execute cmd2
 	ollamaURL = "http://localhost:11434" // reset
 	err2 := cmd2.Execute()
 	url2 := ollamaURL
-	
+
 	if err1 != nil {
 		t.Errorf("Command 1 should not error: %v", err1)
 	}
 	if err2 != nil {
 		t.Errorf("Command 2 should not error: %v", err2)
 	}
-	
+
 	if url1 != "http://server1:8080" {
 		t.Errorf("Command 1 should set URL to 'http://server1:8080', got '%s'", url1)
 	}

@@ -43,26 +43,26 @@ and proper error handling throughout the application.`,
 			expectedDescription: "This commit adds structured logging with different levels and proper error handling throughout the application.",
 		},
 		{
-			name: "Single line response (fallback)",
-			response: "Fix critical security vulnerability",
+			name:                "Single line response (fallback)",
+			response:            "Fix critical security vulnerability",
 			expectedTitle:       "Fix critical security vulnerability",
 			expectedDescription: "Code changes as shown in the git diff.",
 		},
 		{
-			name: "Empty response",
-			response: "",
+			name:                "Empty response",
+			response:            "",
 			expectedTitle:       "",
 			expectedDescription: "Code changes as shown in the git diff.",
 		},
 		{
-			name: "Only title provided",
-			response: "TITLE: Refactor user service layer",
+			name:                "Only title provided",
+			response:            "TITLE: Refactor user service layer",
 			expectedTitle:       "Refactor user service layer",
 			expectedDescription: "Code changes as shown in the git diff.",
 		},
 		{
-			name: "Only description provided",
-			response: "DESCRIPTION: Updated all dependencies to latest versions and fixed security vulnerabilities.",
+			name:                "Only description provided",
+			response:            "DESCRIPTION: Updated all dependencies to latest versions and fixed security vulnerabilities.",
 			expectedTitle:       "",
 			expectedDescription: "Updated all dependencies to latest versions and fixed security vulnerabilities.",
 		},
@@ -98,11 +98,11 @@ DESCRIPTION: Second description`,
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := parseCommitMessage(tt.response)
-			
+
 			if result.Title != tt.expectedTitle {
 				t.Errorf("parseCommitMessage().Title = %q, want %q", result.Title, tt.expectedTitle)
 			}
-			
+
 			if result.Description != tt.expectedDescription {
 				t.Errorf("parseCommitMessage().Description = %q, want %q", result.Description, tt.expectedDescription)
 			}
@@ -165,10 +165,10 @@ func TestGetToneInstruction(t *testing.T) {
 
 func TestNewClient(t *testing.T) {
 	tests := []struct {
-		name        string
-		baseURL     string
-		model       string
-		expectedURL string
+		name          string
+		baseURL       string
+		model         string
+		expectedURL   string
 		expectedModel string
 	}{
 		{
@@ -204,15 +204,15 @@ func TestNewClient(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			client := NewClient(tt.baseURL, tt.model)
-			
+
 			if client.BaseURL != tt.expectedURL {
 				t.Errorf("NewClient().BaseURL = %q, want %q", client.BaseURL, tt.expectedURL)
 			}
-			
+
 			if client.Model != tt.expectedModel {
 				t.Errorf("NewClient().Model = %q, want %q", client.Model, tt.expectedModel)
 			}
-			
+
 			if client.client == nil {
 				t.Error("NewClient().client should not be nil")
 			}

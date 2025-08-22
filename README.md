@@ -9,6 +9,12 @@
 
 AI-powered Go CLI tool that generates commit messages from staged git changes using Ollama.
 
+## Demo
+
+![Snippety Demo](docs/demo.gif)
+
+*Snippety automatically detects your branch, analyzes changes, and generates structured commit messages with both title and description.*
+
 ## Features
 
 - 🤖 **AI-Generated Messages**: Uses Ollama to generate meaningful commit messages

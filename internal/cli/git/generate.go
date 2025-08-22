@@ -178,7 +178,7 @@ func pushCommit() error {
 			if branchErr != nil {
 				return fmt.Errorf("git push failed and could not get branch name: %w", err)
 			}
-			
+
 			// Try push with set-upstream
 			upstreamCmd := exec.Command("git", "push", "--set-upstream", "origin", branchName)
 			upstreamOutput, upstreamErr := upstreamCmd.CombinedOutput()
@@ -209,13 +209,13 @@ func extractTicketPrefix(branchName string) string {
 		// Pattern 2: chore/DEVOPS-989 -> DEVOPS-989:
 		regexp.MustCompile(`/([A-Z]+-)(\d+)`),
 	}
-	
+
 	for _, pattern := range patterns {
 		if matches := pattern.FindStringSubmatch(branchName); len(matches) >= 3 {
 			return matches[1] + matches[2] + ": "
 		}
 	}
-	
+
 	return ""
 }
 

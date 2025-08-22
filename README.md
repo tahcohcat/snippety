@@ -1,5 +1,11 @@
 # Snippety
 
+[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go)](https://golang.org)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/tahcohcat/snippety?style=flat-square)](https://github.com/tahcohcat/snippety/releases)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/tahcohcat/snippety/build.yml?style=flat-square)](https://github.com/tahcohcat/snippety/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/tahcohcat/snippety?style=flat-square)](https://goreportcard.com/report/github.com/tahcohcat/snippety)
+
 AI-powered Go CLI tool that generates commit messages from staged git changes using Ollama.
 
 ## Features

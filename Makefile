@@ -2,7 +2,7 @@
 
 # Binary name
 BINARY_NAME=snippety
-CMD_PATH=./cmd/snippety
+CMD_PATH=./cmd/snippety/main.go
 
 # Build the binary
 build:

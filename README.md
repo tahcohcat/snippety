@@ -11,7 +11,7 @@ AI-powered Go CLI tool that generates commit messages from staged git changes us
 
 ## Demo
 
-![Snippety Demo](docs/demo.gif)
+![Snippety Demo](docs/demo.gif) (TODO)
 
 *Snippety automatically detects your branch, analyzes changes, and generates structured commit messages with both title and description.*
 

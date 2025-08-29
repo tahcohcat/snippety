@@ -9,4 +9,5 @@ import (
 func main() {
 	logrus.SetLevel(logrus.InfoLevel)
 	cobra.Execute()
+	logrus.Debugf("exiting snippety.exe")
 }

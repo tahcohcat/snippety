@@ -8,6 +8,8 @@
 *.so
 *.dylib
 
+.idea/
+./idea/*
 
 # Test binary, built with `go test -c`
 *.test
@@ -42,5 +44,7 @@ ehthumbs.db
 Thumbs.db
 
 # Binary file (not the directory)
-/snippety
+/snippety.exe
 snippety.exe
+snippety
+/snippety

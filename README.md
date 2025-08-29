@@ -1,4 +1,4 @@
-# ✂️ Snippety
+<img width="336" height="121" alt="image" src="https://github.com/user-attachments/assets/90ba25e7-1795-4d2c-adb1-f36998211e3f" />
 
 [![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat-square&logo=go)](https://golang.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
